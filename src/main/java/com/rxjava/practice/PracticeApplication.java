@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -43,8 +44,12 @@ public class PracticeApplication implements CommandLineRunner {
 		ejemploUsuarioComentarioZipWith();
 		System.out.println("----------------------------- EXAMPLE 7 ------------------------------");
 		ejemploUsuarioComentarioZipWith2();
-		System.out.println("----------------------------- EXAMPLE 7 ------------------------------");
+		System.out.println("----------------------------- EXAMPLE 8 ------------------------------");
 		ejemploZipWithRangos();
+		System.out.println("----------------------------- EXAMPLE 9 ------------------------------");
+		ejemploIntervalo();
+		System.out.println("----------------------------- EXAMPLE 10 ------------------------------");
+		ejemploDelayElements();
 
 	}
 
@@ -220,5 +225,22 @@ public class PracticeApplication implements CommandLineRunner {
 	/*
 	* Intervalos de tiempo
 	* */
+
+	private void ejemploIntervalo(){
+		Flux<Integer> rango = Flux.range(1, 16);
+		Flux<Long> retraso = Flux.interval(Duration.ofSeconds(1));
+
+		rango.zipWith(retraso, (ran, retr) -> ran)
+				.doOnNext(integer -> log.info(integer.toString()))
+				.blockLast();
+	}
+
+	private void ejemploDelayElements(){
+		Flux<Integer> rango = Flux.range(1, 16)
+				.delayElements(Duration.ofSeconds(1))
+				.doOnNext(integer -> log.info(integer.toString()));
+
+		rango.blockLast();
+	}
 
 }
